@@ -105,24 +105,42 @@ router.get('/getorder/:userId/:orderId', async (req, res) => {
 });
 
 
-router.get('/getorders/:userId', async (req, res) => {
+router.post('/user/is-first-purchase', async (req, res) => {
   try {
-    const { userId } = req.params;
-
-    const user = await USER.findById(userId);
-    if (!user) {
-      return res.status(404).json({ success: false, message: 'User not found' });
+    const { userId } = req.body; // Get userId from request body
+    
+    if (!userId) {
+      return res.status(400).json({
+        success: false,
+        message: 'User ID is required'
+      });
     }
-
-    // Sort orders by date (newest first)
-    const orders = user.placedOrders.sort((a, b) => 
-      new Date(b.orderDate).getTime() - new Date(a.orderDate).getTime()
-    );
-
-    res.status(200).json({ success: true, orders });
+    
+    const user = await USER.findById(userId);
+    
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
+    
+    // Check if placedOrders array is empty
+    const isFirstPurchase = user.placedOrders.length === 0;
+    
+    return res.status(200).json({
+      success: true,
+      isFirstPurchase: isFirstPurchase,
+      totalOrders: user.placedOrders.length
+    });
+    
   } catch (error) {
-    console.error('Error fetching orders:', error);
-    res.status(500).json({ success: false, message: 'Server error' });
+    console.error('Error checking first purchase:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Server error',
+      error: error.message
+    });
   }
 });
 
