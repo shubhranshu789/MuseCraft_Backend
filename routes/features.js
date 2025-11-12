@@ -86,6 +86,7 @@ router.post('/addtocart', async (req, res) => {
   }
 });
 
+
 router.get('/getcart/:userId', async (req, res) => {
   try {
     const { userId } = req.params;
@@ -436,11 +437,47 @@ router.post('/removefromwishlist', async (req, res) => {
 });
 
 // Get Wishlist
+// router.get('/getwishlist/:userId', async (req, res) => {
+//   try {
+//     const { userId } = req.params;
+
+//     // Validate if userId is a valid MongoDB ObjectId
+//     if (!mongoose.Types.ObjectId.isValid(userId)) {
+//       return res.status(400).json({
+//         success: false,
+//         message: 'Invalid user ID format'
+//       });
+//     }
+
+//     const user = await USER.findById(userId);
+
+//     if (!user) {
+//       return res.status(404).json({
+//         success: false,
+//         message: 'User not found'
+//       });
+//     }
+
+//     res.status(200).json({
+//       success: true,
+//       wishlist: user.wishlist || []
+//     });
+
+//   } catch (error) {
+//     console.error('Error getting wishlist:', error);
+//     res.status(500).json({
+//       success: false,
+//       message: 'Server error',
+//       error: error.message
+//     });
+//   }
+// });
+
+// Get user's wishlist
 router.get('/getwishlist/:userId', async (req, res) => {
   try {
     const { userId } = req.params;
 
-    // Validate if userId is a valid MongoDB ObjectId
     if (!mongoose.Types.ObjectId.isValid(userId)) {
       return res.status(400).json({
         success: false,
@@ -449,7 +486,7 @@ router.get('/getwishlist/:userId', async (req, res) => {
     }
 
     const user = await USER.findById(userId);
-
+    
     if (!user) {
       return res.status(404).json({
         success: false,
@@ -463,7 +500,7 @@ router.get('/getwishlist/:userId', async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Error getting wishlist:', error);
+    console.error('Error fetching wishlist:', error);
     res.status(500).json({
       success: false,
       message: 'Server error',
@@ -471,9 +508,6 @@ router.get('/getwishlist/:userId', async (req, res) => {
     });
   }
 });
-
-
-
 
 
 
